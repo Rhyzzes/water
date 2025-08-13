@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaPure - Customer Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+    /* Water Theme CSS */
+    :root {
+        --primary-blue: #0077b6;
+        --secondary-blue: #00b4d8;
+        --light-blue: #caf0f8;
+        --dark-blue: #005f8a;
+        --white: #ffffff;
+        --gray: #666666;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #e6f7ff;
+        background-image: 
+            linear-gradient(to bottom, rgba(230, 247, 255, 0.9), rgba(173, 216, 230, 0.7)), 
+            url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%2300b4d8" fill-opacity="0.1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-repeat: no-repeat;
+        background-position: bottom;
+        background-size: contain;
+        min-height: 100vh;
+    }
+
+    header {
+        background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        margin-right: auto;
+    }
+
+    .logo span {
+        color: var(--light-blue);
+        margin-left: 0.5rem;
+    }
+
+    .water-icon {
+        font-size: 1.8rem;
+        margin-right: 0.5rem;
+    }
+
+    nav {
+        display: flex;
+        gap: 1.5rem;
+        margin: 0 auto;
+    }
+
+    nav a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        transition: all 0.3s;
+        position: relative;
+    }
+
+    nav a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    nav a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: var(--light-blue);
+        transition: all 0.3s;
+        transform: translateX(-50%);
+    }
+
+    nav a:hover::after {
+        width: 80%;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    .welcome-note {
+        text-align: center;
+        padding: 3rem 0;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .welcome-note::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(0,180,216,0.1) 0%, rgba(255,255,255,0) 70%);
+        animation: waterRipple 15s infinite linear;
+        z-index: 0;
+    }
+
+    .welcome-note h1 {
+        color: var(--primary-blue);
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+
+    .welcome-note p {
+        color: var(--gray);
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .water-drop {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--secondary-blue);
+        position: relative;
+        display: inline-block;
+        animation: bounce 2s infinite;
+    }
+
+    /* Image Grid */
+    .image-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .gallery-item {
+        position: relative;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        aspect-ratio: 1/1;
+    }
+
+    .gallery-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .gallery-item:hover img {
+        transform: scale(1.1);
+    }
+
+    .gallery-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+        padding: 1.5rem 1rem 1rem;
+        color: white;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .gallery-item:hover .gallery-overlay {
+        opacity: 1;
+    }
+
+    .gallery-overlay h3 {
+        margin: 0;
+        font-size: 1.2rem;
+    }
+
+    .gallery-overlay p {
+        margin: 0.5rem 0 0;
+        font-size: 0.9rem;
+    }
+
+    /* Water Wave Decoration */
+    .water-wave {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+        z-index: -1;
+    }
+
+    .water-wave svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 150px;
+    }
+
+    .water-wave .shape-fill {
+        fill: var(--light-blue);
+        opacity: 0.3;
+    }
+
+    /* Benefits Section */
+    .benefits {
+        margin-top: 5rem;
+        background-color: rgba(255,255,255,0.95);
+        padding: 3rem 2rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        position: relative;
+    }
+
+    .benefits::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+        border-radius: 15px 15px 0 0;
+    }
+
+    .benefits h2 {
+        color: var(--primary-blue);
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        position: relative;
+    }
+
+    .benefits h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--secondary-blue);
+    }
+
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .benefit-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .benefit-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .benefit-icon {
+        font-size: 2.5rem;
+        color: var(--secondary-blue);
+        margin-bottom: 1rem;
+    }
+
+    .benefit-card h3 {
+        color: var(--primary-blue);
+        margin-bottom: 0.5rem;
+    }
+
+    .benefit-card p {
+        color: var(--gray);
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    /* Animations */
+    @keyframes waterRipple {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-15px);
+        }
+    }
+
+    @media (max-width: 768px) {
+        header {
+            flex-direction: column;
+            padding: 1rem;
+        }
+
+        nav {
+            margin-top: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .container {
+            padding: 0 1rem;
+        }
+
+        .welcome-note h1 {
+            font-size: 2rem;
+        }
+
+        .welcome-note p {
+            font-size: 1rem;
+        }
+
+        .image-gallery {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .benefits-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span class="water-icon">💧</span>
+            <span>Aqua<span>Pure</span></span>
+        </div>
+        
+        <nav>
+            <a href="dashboard.html">Home</a>
+            <a href="products.php">Products</a>
+            <a href="customersupport.php">Customer Support</a>
+            <a href="about.php">About</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Welcome Note -->
+        <div class="welcome-note">
+            <div class="water-drop">💧</div>
+            <h1>Welcome to AquaPure</h1>
+            <p>Experience the purest, cleanest, and most refreshing water delivered right to your doorstep. We value your health and hydration needs.</p>
+        </div>
+
+        <!-- Image Gallery -->
+        <div class="image-gallery">
+            <div class="gallery-item">
+                <img src="images/1.jpg" alt="Premium Mineral Water">
+                <div class="gallery-overlay">
+                    <h3>Premium Mineral Water</h3>
+                    <p>Naturally rich in essential minerals</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/2.jpg" alt="Spring Water Collection">
+                <div class="gallery-overlay">
+                    <h3>Spring Water Collection</h3>
+                    <p>Sourced from natural springs</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/3.jpg" alt="Purified Water">
+                <div class="gallery-overlay">
+                    <h3>Purified Water</h3>
+                    <p>Advanced filtration technology</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/4.jpg" alt="Water Delivery Service">
+                <div class="gallery-overlay">
+                    <h3>Delivery Service</h3>
+                    <p>Fast and reliable delivery</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/5.jpg" alt="Eco-Friendly Packaging">
+                <div class="gallery-overlay">
+                    <h3>Eco-Friendly Packaging</h3>
+                    <p>Sustainable solutions</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/6.jpg" alt="Office Water Solutions">
+                <div class="gallery-overlay">
+                    <h3>Office Solutions</h3>
+                    <p>Perfect for workplaces</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="benefits">
+            <h2>Benefits of Drinking Water</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-bolt"></i></div>
+                    <h3>Boosts Energy</h3>
+                    <p>Stay energized throughout the day with proper hydration</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-heart"></i></div>
+                    <h3>Supports Health</h3>
+                    <p>Essential for all bodily functions and overall wellbeing</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-brain"></i></div>
+                    <h3>Improves Focus</h3>
+                    <p>Enhances cognitive function and mental clarity</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Water Wave Decoration -->
+    <div class="water-wave">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path>
+            <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path>
+            <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
+        </svg>
+    </div>
+
+    <script>
+        // Add animation to benefit cards on scroll
+        const benefitCards = document.querySelectorAll('.benefit-card');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.transitionDelay = `${index * 0.1}s`;
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        benefitCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.5s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
